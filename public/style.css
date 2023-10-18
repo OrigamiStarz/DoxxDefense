@@ -1,0 +1,12 @@
+textarea {
+    resize: none;
+}
+
+#logo * {
+    font-family: 'Berkshire Swash', serif;
+    display: inline;
+}
+
+* {
+    font-family: 'Murecho', sans-serif;
+}
