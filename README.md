@@ -2,6 +2,6 @@
 
 ## Requirements
 Run the following commands:
-`npm i express`
-`npm i bootstrap`
-`npm i sass`
+1. `npm i express`
+2. `npm i bootstrap`
+3. `npm i scss`
