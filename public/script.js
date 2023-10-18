@@ -1,11 +1,15 @@
-// toggle light/dark mode
-const btnSwitch = document.getElementById("btn-switch")
-btnSwitch.addEventListener("click",function(){
-    if (document.documentElement.getAttribute("data-bs-theme") == "dark") {
-        document.documentElement.setAttribute("data-bs-theme","light");
-    }
-    else {
-        document.documentElement.setAttribute("data-bs-theme","dark");
-    }
-})
+const txtBtn = document.getElementById("txt-btn");
+const docBtn = document.getElementById("doc-btn");
+const webBtn = document.getElementById("web-btn");
 
+txtBtn.onclick = () => {
+    window.location.href = "/text";
+}
+
+docBtn.onclick = () => {
+    window.location.href = "/document";
+}
+
+webBtn.onclick = () => {
+    window.location.href = "/website";
+}

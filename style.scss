@@ -1,0 +1,58 @@
+@import "node_modules/bootstrap/scss/bootstrap";
+
+// variables for colors
+$primary-color: #4B8EDC;
+$secondary-color: #8AB4E5;
+$bg-color: #BDD0EC;
+
+// textarea
+.form-control {
+  resize: none;
+  border: 4px solid $primary-color;
+}
+
+// fonts
+#logo * {
+  font-family: 'Berkshire Swash', serif;
+  display: inline;
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+}
+
+
+* {
+  font-family: 'Murecho', sans-serif;
+}
+
+// buttons
+.active {
+  background-color: $primary-color;
+}
+// change feature buttons
+.btn-outline-secondary {
+  border-color: $primary-color;
+  color: $primary-color;
+}
+.btn-outline-secondary:hover:not(.active) {
+  border-color: $primary-color;
+  background: $primary-color;
+  opacity: 0.8;
+}
+.btn.btn-outline-secondary.active{
+  border-color: $primary-color;
+  background: $primary-color;
+}
+// submit button
+.btn-secondary {
+  background-color: $secondary-color;
+  border-color: $primary-color; 
+}
+.btn-secondary:hover {
+  background-color: $primary-color;
+  border-color: $primary-color;
+}
+
+body {
+  background-color: $bg-color;
+}
