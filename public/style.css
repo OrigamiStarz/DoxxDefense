@@ -11855,9 +11855,18 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+body {
+  background-color: #BDD0EC;
+}
+
 .form-control {
   resize: none;
-  border: 4px solid #4B8EDC;
+  border: 6px solid #4B8EDC;
+}
+
+.form-control::placeholder {
+  color: gray;
+  opacity: 0.7; /* Firefox */
 }
 
 #logo * {
@@ -11884,7 +11893,7 @@ textarea.form-control-lg {
 .btn-outline-secondary:hover:not(.active) {
   border-color: #4B8EDC;
   background: #4B8EDC;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .btn.btn-outline-secondary.active {
@@ -11902,8 +11911,39 @@ textarea.form-control-lg {
   border-color: #4B8EDC;
 }
 
-body {
-  background-color: #BDD0EC;
+#inner-drop-area {
+  border: 4px dashed gray;
+  padding: 10vw 10vh;
+}
+
+#outer-drop-area {
+  background: white;
+  padding: 10vw 10vh;
+  transition: 0.2s ease-out;
+}
+
+#outer-drop-area:hover {
+  opacity: 0.8;
+}
+
+#upload-icon {
+  opacity: 0.35;
+  min-width: 150px;
+  width: 10vw;
+}
+
+.fake-button {
+  background-color: #4B8EDC;
+  color: white;
+  margin: auto;
+  font-size: max(24px, 2.5vw);
+  border-radius: 10px;
+}
+
+.desc {
+  color: gray;
+  margin: 5px;
+  font-size: max(20px, 2vw);
 }
 
 /*# sourceMappingURL=style.css.map */
