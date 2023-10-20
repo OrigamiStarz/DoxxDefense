@@ -5,10 +5,19 @@ $primary-color: #4B8EDC;
 $secondary-color: #8AB4E5;
 $bg-color: #BDD0EC;
 
+// background color
+body {
+  background-color: $bg-color;
+}
+
 // textarea
 .form-control {
   resize: none;
-  border: 4px solid $primary-color;
+  border: 6px solid $primary-color;
+}
+.form-control::placeholder {
+  color: gray;
+  opacity: 0.7; /* Firefox */
 }
 
 // fonts
@@ -19,8 +28,6 @@ $bg-color: #BDD0EC;
   height: 50px;
   border-radius: 100%;
 }
-
-
 * {
   font-family: 'Murecho', sans-serif;
 }
@@ -37,7 +44,7 @@ $bg-color: #BDD0EC;
 .btn-outline-secondary:hover:not(.active) {
   border-color: $primary-color;
   background: $primary-color;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 .btn.btn-outline-secondary.active{
   border-color: $primary-color;
@@ -53,6 +60,41 @@ $bg-color: #BDD0EC;
   border-color: $primary-color;
 }
 
-body {
-  background-color: $bg-color;
+
+// drop area
+#inner-drop-area {
+  border: 4px dashed gray;
+  padding: 10vw 10vh;
 }
+
+#outer-drop-area {
+  background: white;
+  padding: 10vw 10vh;
+  transition: 0.2s ease-out;
+}
+
+#outer-drop-area:hover {
+  opacity: 0.8;
+}
+
+// upload icon 
+#upload-icon {
+  opacity: 0.35;
+  min-width: 150px;
+  width: 10vw;
+}
+
+.fake-button {
+  background-color: $primary-color;
+  color: white;
+  margin: auto;
+  font-size: max(24px, 2.5vw);
+  border-radius: 10px;
+}
+
+.desc {
+  color: gray;
+  margin: 5px;
+  font-size: max(20px, 2vw);
+}
+ 
