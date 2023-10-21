@@ -28,38 +28,36 @@
             <button type="button" class="btn btn-outline-secondary active" id="web-btn">Website</button>
         </div>
 
-        <form action="/website" method="post">
+        <!-- <form action="/website" method="post"> -->
 
             <!-- input box -->
             <div class="container-fluid">
                 <div class="form-group">
                     <div class="p-1 rounded-3">
-                        <textarea class="form-control mt-5 mb-2" rows="1" placeholder="Enter URL here" wrap="off" maxlength="200" ></textarea>
+                        <textarea name="url" id="url-box" class="form-control mt-5 mb-2" rows="1" placeholder="Enter URL here" wrap="off" maxlength="200" ></textarea>
                     </div>
                 </div>
             </div>
             
             <!-- advanced -->
-
-            <div class="dropdown text-center m-1">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="dropdown text-center m-1 mb-3">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false" data-offset="-80,0">
                   Advanced
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <ul class="dropdown-menu p-2" aria-labelledby="dropdownMenuButton1">
                     <li>
                         <label>Number of Websites to Crawl</label>
-                        <input type="number" placeholder="1">
+                        <input name="numCrawl" id="numCrawl" type="number" placeholder="1" min="1" max="9">
                     </li>
                 </ul>
               </div>
 
-
             <!-- submit button -->
             <div class="text-center">
-                <button class="btn btn-secondary btn-lg mt-5" type="submit" id="submit">Submit</button>
+                <button class="btn btn-secondary btn-lg mt-5" type="submit" id="submit" onclick="sendData()">Submit</button>
             </div>
 
-        </form>
+        <!-- </form> -->
 
         <!-- footer -->
         <footer class="text-center text-lg-start position-absolute bottom-0 start-50 translate-middle-x">
@@ -81,6 +79,26 @@
                 e.preventDefault();
             }
         });
+
+        // function to get data
+        function sendData() {
+            const data = {
+                url: document.getElementById("url-box").value,
+                numCrawl: document.getElementById("numCrawl").value,
+            };
+            fetch('/website', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {console.log(data)})
+                .catch(error => {console.error(error);
+            });
+        }
+
     </script>
     </body>
 </html>

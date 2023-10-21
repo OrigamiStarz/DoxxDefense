@@ -11926,6 +11926,10 @@ body {
   opacity: 0.8;
 }
 
+input[type=file] {
+  display: none;
+}
+
 #upload-icon {
   opacity: 0.35;
   min-width: 150px;
@@ -11944,6 +11948,11 @@ body {
   color: gray;
   margin: 5px;
   font-size: max(20px, 2vw);
+}
+
+#numCrawl {
+  width: 35px;
+  margin: 5px;
 }
 
 /*# sourceMappingURL=style.css.map */

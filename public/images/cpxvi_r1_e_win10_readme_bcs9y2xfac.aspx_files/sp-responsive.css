@@ -1,0 +1,53 @@
+﻿@media (min-width: 1200px) {
+}
+
+@media (max-width: 979px) {
+    table thead tr th:nth-child(5) {
+        display: none;
+    }
+
+    table tbody tr td:nth-child(5) {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {
+}
+
+
+    @media (max-width: 479px) {
+        table.ms-listviewtable > tbody > tr {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 479px) {
+        table.ms-listviewtable > tbody > tr {
+            padding: 10px;
+        }
+
+            table.ms-listviewtable > tbody > tr > td {
+                display: block;
+                text-align: left;
+                border: none!important;
+                width: 100%; /* IE8 */
+                float: left; /* IE8 */
+            }
+
+        /*table.ms-listviewtable > tbody > tr > td.ms-vb2 > a {
+		font-size: 1.2em;
+		font-weight: bold;
+	}*/
+
+        table.ms-listviewtable tr.s4-itm-hover > td, table.ms-listviewtable tr.ms-itmhover:hover > td, tr.s4-itm-selected > td, tr.s4-itm-selected:hover > td {
+            border: none;
+        }
+
+        table.ms-listviewtable .ms-viewheadertr, table.ms-listviewtable tbody tr td.ms-vb-firstCell {
+            display: none;
+        }
+
+        td.ms-list-itemLink-td.ms-cellstyle, img.ms-newdocument-icon {
+            display: none;
+        }
+    }
