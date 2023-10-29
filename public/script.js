@@ -1,3 +1,5 @@
+// switching between pages
+
 const txtBtn = document.getElementById("txt-btn");
 const docBtn = document.getElementById("doc-btn");
 const webBtn = document.getElementById("web-btn");

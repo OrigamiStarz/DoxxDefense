@@ -108,3 +108,42 @@ input[type="file"]{
   width: 35px;
   margin: 5px;
 }
+
+.close {
+  border: none;
+  background: none;
+  transition: 0.2s ease-out;
+  opacity: 0.7;
+  font-size: 25px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  color: gray;
+}
+
+.close:hover {
+  opacity: 0.5;
+}
+
+.modal-content {
+  border-color: $primary-color;
+  border-width: 10px;
+}
+
+.btn-primary {
+  background-color: $primary-color;
+  transition: 0.2s ease-out;
+}
+
+.btn-primary:hover {
+  background-color: $primary-color;
+  opacity: 0.90;
+}
+
+.icon {
+  width: 20px;
+  margin: 0;
+  padding-bottom: 5px;
+  filter: invert(1); // make white
+}
