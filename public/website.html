@@ -80,7 +80,7 @@
         
         <!-- advanced -->
 
-        <div class="dropdown text-center m-1">
+        <div class="dropdown text-center m-1 mb-4">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 Advanced
             </button>
@@ -100,8 +100,8 @@
 
 
         <!-- footer -->
-        <footer class="text-center w-100 position-absolute bottom-0 start-50 translate-middle-x">
-            <div class="text-center p-3 text-secondary">
+        <footer class="text-center w-100 position-relative bottom-0 start-50 translate-middle-x" style="margin-top: 200px">
+            <div class="text-center p-3 text-secondary" style="font-size: 14px;">
             © 2023 OrigamiStarz. All rights reserved.
             </div>
         </footer>
@@ -137,20 +137,22 @@
                     .then(data => { console.log(data); })
                     .catch(error => { console.log(error);});
             }
+
+            // link submit button to showModal function
+            document.getElementById("submit").addEventListener("click", sendData);
+
             // modal 
             function showModal(title, content1, content2) {
                 // set title and content
                 document.getElementById("modal-title").textContent = title;
-                document.getElementById("content-1").textContent = content1;
+                document.getElementById("content-1").innerHTML = content1;
                 document.getElementById("content-2").textContent = content2;
                 // show modal
-                $("#modal").modal("show");  
+                $("#modal").modal("show");
             }
             document.getElementsByClassName("close")[0].addEventListener("click", function() {
                 $("#modal").modal("hide");
             })
-            // link submit button to showModal function
-            document.getElementById("submit").addEventListener("click", sendData);
 
             // copy text into clipboard
             async function copyText() {
@@ -161,6 +163,20 @@
             document.getElementById("clipboard").onclick = function() {
                 copyText();
             }
+            // download
+            function downloadTextFile() {
+                let text = document.getElementById("content-2").innerHTML;
+                const fileName = 'file.txt';
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            document.getElementById("download").addEventListener("click", downloadTextFile);
 
         </script>
     </body>

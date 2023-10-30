@@ -70,25 +70,25 @@
             <button type="button" class="btn btn-outline-secondary" id="web-btn">Website</button>
         </div>
 
-        <!-- drop files here -->
-        <div class="text-center" onclick="uploadFile()" accept=".doc,.docx,.pdf">
-            <label for="inputTag" class="mt-5 container rounded-3 p-3 w-50" id="outer-drop-area"> 
+        <!-- Drop files here -->
+        <div class="text-center">
+            <label for="inputTag" class="mt-5 container rounded-3 p-3 w-50" id="outer-drop-area">
                 <div>
                     <div class="p-1 rounded-3 container-sm" id="inner-drop-area">
                         <img src="/images/uploadFileIcon.png" alt="Icon" id="upload-icon" class="img-fluid">
                         <h1 class="fake-button w-50 p-1 pb-2">Upload File</h1>
                         <h2 class="desc mb-4">Or Drop It Here</h2>
-                        <input name="file" id="inputTag" type="file"/>
+                        <input name="file" id="inputTag" type="file" accept=".txt, .doc, .docx, .pdf" onchange="uploadFile()">
                     </div>
                 </div>
             </label>
         </div>
 
-        <p class="text-center text-secondary">Accepted File Types: doc, docx, pdf</p>
+        <p class="text-center text-secondary">Accepted File Types: txt, doc, docx, pdf</p>
 
         <!-- footer -->
-        <footer class="text-center w-100 position-absolute bottom-0 start-50 translate-middle-x">
-            <div class="text-center p-3 text-secondary">
+        <footer class="text-center w-100 position-relative mt-1 bottom-0 start-50 translate-middle-x">
+            <div class="text-center p-3 text-secondary" style="font-size: 14px;">
             © 2023 OrigamiStarz. All rights reserved.
             </div>
         </footer>
@@ -101,27 +101,36 @@
         <script src="script.js"></script>
         <script>
             // upload file functionality
-            document.getElementById("inputTag").addEventListener("change", ()=>{
-                const file = document.getElementById("inputTag").files[0];
-                uploadFile(file);
-            });
+            async function uploadFile() {
+            const fileInput = document.getElementById("inputTag");
+            const file = fileInput.files[0];
 
-            async function uploadFile(file) {
-                if (file) {
-                    const data = await fetch("/document", {
-                        method: "POST", 
-                        body: file
-                    }).then(response => response.json())
-                    .then(data => {console.log(data)})
-                    .catch(error => {console.error(error)}); 
+            if (file) {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                try {
+                const response = await fetch("/document", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showModal("", data.content.content1, data.content.content2);
+                } else {
+                    console.error("File upload failed.");
+                }
+                } catch (error) {
+                console.error("Error:", error);
                 }
             }
-
+            }
             // modal 
             function showModal(title, content1, content2) {
                 // set title and content
                 document.getElementById("modal-title").textContent = title;
-                document.getElementById("content-1").textContent = content1;
+                document.getElementById("content-1").innerHTML = content1;
                 document.getElementById("content-2").textContent = content2;
                 // show modal
                 $("#modal").modal("show");
@@ -139,6 +148,20 @@
             document.getElementById("clipboard").onclick = function() {
                 copyText();
             }
+            // download
+            function downloadTextFile() {
+                let text = document.getElementById("content-2").innerHTML;
+                const fileName = 'file.txt';
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            document.getElementById("download").addEventListener("click", downloadTextFile);
 
         </script>
     </body>

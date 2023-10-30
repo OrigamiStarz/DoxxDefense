@@ -85,8 +85,8 @@
         </div>
 
         <!-- footer -->
-        <footer class="text-center w-100 position-absolute bottom-0 start-50 translate-middle-x">
-            <div class="text-center p-3 text-secondary">
+        <footer class="text-center w-100 position-relative mt-1 bottom-0 start-50 translate-middle-x">
+            <div class="text-center p-3 text-secondary" style="font-size: 14px;">
             © 2023 OrigamiStarz. All rights reserved.
             </div>
         </footer>
@@ -137,6 +137,20 @@
             document.getElementById("clipboard").onclick = function() {
                 copyText();
             }
+            // download
+            function downloadTextFile() {
+                let text = document.getElementById("content-2").innerHTML;
+                const fileName = 'file.txt';
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            document.getElementById("download").addEventListener("click", downloadTextFile);
 
         </script>
     </body>

@@ -4,16 +4,18 @@ const app = express();
 const bodyParser =  require("body-parser");
 const axios = require('axios').default;
 const cheerio = require('cheerio');
+const fs = require('fs').promises;
+const mammoth = require("mammoth")
+const pdf = require('pdf-parse');
 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/uploads', express.static('uploads'));
 
 // for environmental variables
-
 require('dotenv').config()
-
 AI_API_TOKEN = process.env.AI_API_TOKEN
 AI_API_TEST_TOKEN = process.env.AI_API_TEST_TOKEN
 
@@ -32,12 +34,58 @@ app.get("/document", function(req, res) {
     res.sendFile(__dirname + "/public/document.html");
 });
 
-app.post("/document", function(req, res) {
-    console.log(req.files);
-    res.send({
-        content: "yes"
-    });
-});
+
+app.post('/document', async (req, res) => {
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ error: 'No files were uploaded.' });
+    }
+  
+    const file = req.files.file;
+  
+    try {
+      await file.mv('uploads/' + file.name);
+      const filePath = __dirname + '/uploads/' + file.name;
+  
+      if (file.name.endsWith('.pdf')) {
+        try {
+          const dataBuffer = await fs.readFile(filePath);
+          const data = await pdf(dataBuffer);
+          const textContent = data.text;
+          const processedData = await processData(textContent);
+          res.json({ message: 'File uploaded and processed successfully', content: processedData });
+        } catch (error) {
+          console.error('Error processing PDF:', error);
+          res.status(500).json({ error: 'Error processing PDF: ' + error.message });
+        }
+      } else if (file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
+        try {
+          const dataBuffer = await fs.readFile(filePath);
+          const result = await mammoth.extractRawText({ buffer: dataBuffer });
+          const textContent = result.value;
+          const processedData = await processData(textContent);
+          console.log(textContent);
+          res.json({ message: 'File uploaded and processed successfully', content: processedData });
+        } catch (error) {
+          console.error('Error processing Word document:', error);
+          res.status(500).json({ error: 'Error processing Word document: ' + error.message });
+        }
+      } else if (file.name.endsWith('.txt')) {
+        try {
+          const textContent = await fs.readFile(filePath, 'utf8');
+          const processedData = await processData(textContent);
+          res.json({ message: 'File uploaded and processed successfully', content: processedData });
+        } catch (error) {
+          console.error('Error processing text file:', error);
+          res.status(500).json({ error: 'Error processing text file: ' + error.message });
+        }
+      } else {
+        res.status(400).json({ error: 'Unsupported file format.' });
+      }
+    } catch (err) {
+      console.error('File upload error:', err);
+      res.status(500).json({ error: 'File upload error: ' + err.message });
+    }
+  });  
 
 // website page
 app.get("/website", function(req, res) {
@@ -59,7 +107,6 @@ app.get("/*", function(req, res) {
 app.listen(process.env.PORT || 3000, function() {
     console.log(`Server is listening on ${process.env.PORT || 3000}`);
 });
-
 
 // use AI to process data
 function processData(text) {

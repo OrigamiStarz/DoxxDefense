@@ -8,6 +8,7 @@ Run the following commands:
 4. `npm i body-parser`
 5. `npm i express-fileupload`
 6. `npm i dotenv`
+7. `npm i fs`
 
 Convenient for testing:
 1. `sass --watch style.scss public/style.css`
