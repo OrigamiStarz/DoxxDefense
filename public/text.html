@@ -85,7 +85,7 @@
         </div>
 
         <!-- footer -->
-        <footer class="text-center w-100 position-relative mt-1 bottom-0 start-50 translate-middle-x">
+        <footer class="text-center w-100 position-relative bottom-0 start-50 translate-middle-x" style="margin-top: 200px">
             <div class="text-center p-3 text-secondary" style="font-size: 14px;">
             © 2023 OrigamiStarz. All rights reserved.
             </div>
@@ -103,7 +103,28 @@
                 const data = {
                     text: document.getElementById("textbox").value,
                 };
-                fetch('/text', {
+                let loadingInterval = setInterval(updateLoadingIndicator, 1000); // Change the loading indicator every 1 second
+                showModal("", "Loading.", "Loading.");
+                // Function to simulate loading indicator
+                function updateLoadingIndicator() {
+                    const loadingIndicator1 = document.getElementById('content-1');
+                    const loadingIndicator2 = document.getElementById('content-2');
+                        if (loadingIndicator1.textContent === 'Loading...') {
+                            loadingIndicator1.textContent = 'Loading.';
+                            loadingIndicator2.textContent = 'Loading.';
+                        } else if (loadingIndicator1.textContent === 'Loading.') {
+                            loadingIndicator1.textContent = 'Loading..';
+                            loadingIndicator2.textContent = 'Loading..';
+                        } else {
+                            loadingIndicator1.textContent = 'Loading...';
+                            loadingIndicator2.textContent = 'Loading...';
+                    }
+                }
+                // Function to stop the loading indicator and display the response
+                function stopLoadingIndicator() {
+                    clearInterval(loadingInterval); // Clear the loading interval
+                }
+                await fetch('/text', {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
@@ -111,7 +132,7 @@
                     body: JSON.stringify(data),
                 })
                     .then(response => response.json())
-                    .then(data => {showModal("", data.content1, data.content2);})
+                    .then(data => {stopLoadingIndicator(); showModal("", data.content1, data.content2);})
                     .catch(error => {console.error(error);
                 });
             }

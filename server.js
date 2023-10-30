@@ -62,7 +62,6 @@ app.post('/document', async (req, res) => {
           const result = await mammoth.extractRawText({ buffer: dataBuffer });
           const textContent = result.value;
           const processedData = await processData(textContent);
-          console.log(textContent);
           res.json({ message: 'File uploaded and processed successfully', content: processedData });
         } catch (error) {
           console.error('Error processing Word document:', error);
@@ -100,12 +99,14 @@ app.post("/website", async function(req, res) {
       numCrawl = parseInt(numCrawl);    
       if (numCrawl <= 0) {
         numCrawl = 1;
-      } else if (numCrawl >= 10) {
-        numCrawl = 9; 
+      } else if (numCrawl >= 6) {
+        numCrawl = 5; 
       }
     }
     scraped = await scrape(req.body["url"], numCrawl);
-    res.json(scraped);
+    let data = await processData(scraped);
+    console.log(data);
+    res.json(data);
 });
 
 // default to text page
@@ -149,32 +150,31 @@ function processData(text) {
     });      
 }
 
-function getSynonym(sentence, avoid) {
-    const options = {
-        method: "POST",
-        url: "https://api.edenai.run/v2/text/generation",
-        headers: {
-          authorization: "Bearer " + AI_API_TEST_TOKEN,
-        },
-        data: {
-          show_original_response: false,
-          fallback_providers: "",
-          providers: "openai",
-          text: "Fill in the blank: " + sentence + ". Avoid: " + avoid.join(", ") + ". Format: answer, separated by commas",
-          temperature: 0.2,
-          max_tokens: 50,
-        },
-      };
-      
-      return axios
-        .request(options)
-        .then((response) => {
-          return response.data.openai.generated_text.split(", ");
-        })
-        .catch((error) => {
-          console.error(error);
-    });      
-}
+// function getSynonym(sentence, avoid) {
+//     const options = {
+//         method: "POST",
+//         url: "https://api.edenai.run/v2/text/generation",
+//         headers: {
+//           authorization: "Bearer " + AI_API_TEST_TOKEN,
+//         },
+//         data: {
+//           show_original_response: false,
+//           fallback_providers: "",
+//           providers: "openai",
+//           text: "Fill in the blank: " + sentence + ". Avoid: " + avoid.join(", ") + ". Format: answer, separated by commas",
+//           temperature: 0.2,
+//           max_tokens: 50,
+//         },
+//       };
+//       return axios
+//         .request(options)
+//         .then((response) => {
+//           return response.data.openai.generated_text.split(", ");
+//         })
+//         .catch((error) => {
+//           console.error(error);
+//     });      
+// }
 
 async function scrape(url, depth) {
   if (depth <= 0) {
@@ -186,7 +186,9 @@ async function scrape(url, depth) {
     if (response.status === 200) {
       const html = response.data;
       const $ = cheerio.load(html);
-      const textContent = $('body').text();
+
+      // Select and extract text content from specific tags (e.g., p, h1, h2)
+      const textContent = $('p, h1, h2').text();
       console.log(`Scraped: ${url}`);
 
       // Find links on the page and follow them recursively
@@ -200,13 +202,21 @@ async function scrape(url, depth) {
 
       let subContent = '';
       for (const link of links) {
-        subContent += await scrape(link, depth - 1);
+        try {
+          subContent += await scrape(link, depth - 1);
+        } catch (error) {
+          console.error(`Error while scraping ${link}: ${error.message}`);
+          // Continue with the next link even if one fails
+        }
       }
-      return (textContent + subContent).replace(/\s+/g, ' ').trim();
+
+      return textContent + subContent;
     } else {
-      throw new Error('Failed to fetch the website.');
+      console.error(`Failed to fetch the website: ${url}`);
+      return '';
     }
   } catch (error) {
-    throw error;
+    console.error(`Error while scraping ${url}: ${error.message}`);
+    return '';
   }
 }
