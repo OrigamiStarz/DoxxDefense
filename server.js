@@ -34,7 +34,6 @@ app.get("/document", function(req, res) {
     res.sendFile(__dirname + "/public/document.html");
 });
 
-
 app.post('/document', async (req, res) => {
     if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).json({ error: 'No files were uploaded.' });
@@ -93,10 +92,20 @@ app.get("/website", function(req, res) {
 });
 
 app.post("/website", async function(req, res) {
-    console.log(req.body)
     // use scraper
-    scraped = await scrape(req.body["url"], 0, req.body["numCrawl"]);
-    res.send(scraped);
+    let numCrawl = req.body["numCrawl"];
+    if (numCrawl === undefined || numCrawl === null || numCrawl === '' || isNaN(numCrawl)) {
+      numCrawl = 1;
+    } else {
+      numCrawl = parseInt(numCrawl);    
+      if (numCrawl <= 0) {
+        numCrawl = 1;
+      } else if (numCrawl >= 10) {
+        numCrawl = 9; 
+      }
+    }
+    scraped = await scrape(req.body["url"], numCrawl);
+    res.json(scraped);
 });
 
 // default to text page
@@ -167,50 +176,37 @@ function getSynonym(sentence, avoid) {
     });      
 }
 
-// https://stackoverflow.com/questions/23691194/node-express-file-upload
+async function scrape(url, depth) {
+  if (depth <= 0) {
+    return '';
+  }
 
-async function scrape(url, depth, numCrawl) {
-    if (!numCrawl) numCrawl = 1;
-    numCrawl = parseInt(numCrawl);
-    numCrawl = (numCrawl >= 1 && numCrawl < 10) ? numCrawl : 1;
-    content = await scrapeWithDepth(url, depth, numCrawl)
-    return {content:content}
-}
-
-async function scrapeWithDepth(url, depth, numCrawl) {
-    // scrape a URL up to a maximum depth
-    if (depth >= numCrawl) {
-        return; // exit if maximum depth
-    }
-    // fetch html
-    content = []
-    await axios.get(url)
-    .then((response) => {
+  try {
+    const response = await axios.get(url);
     if (response.status === 200) {
-        const html = response.data;
-        const $ = cheerio.load(html);
-        // Use Cheerio to select and extract data from the HTML
-        content.push($.text());
-        // Find links on the page and recursively scrape them
-        const links = [];
-        $('a').each((index, element) => {
+      const html = response.data;
+      const $ = cheerio.load(html);
+      const textContent = $('body').text();
+      console.log(`Scraped: ${url}`);
+
+      // Find links on the page and follow them recursively
+      const links = [];
+      $('a').each((index, element) => {
         const link = $(element).attr('href');
         if (link && link.startsWith('http')) {
-            links.push(link);
+          links.push(link);
         }
-        });
-        if (depth + 1 < numCrawl) {
-            // recursive scrape
-            links.forEach((link) => {
-                console.log(link)
-                let next = scrapeWithDepth(link, depth + 1, numCrawl);
-                if (next) content.push(next);
-            });
-        }
+      });
+
+      let subContent = '';
+      for (const link of links) {
+        subContent += await scrape(link, depth - 1);
+      }
+      return (textContent + subContent).replace(/\s+/g, ' ').trim();
+    } else {
+      throw new Error('Failed to fetch the website.');
     }
-    })
-    .catch((error) => {
-        return {content: error};
-    });
-    return content;
+  } catch (error) {
+    throw error;
+  }
 }

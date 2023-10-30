@@ -126,16 +126,23 @@
                     url: document.getElementById("url-box").value,
                     numCrawl: document.getElementById("numCrawl").value,
                 };
-                await fetch('/website', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                })
-                    .then(response => response.json())
-                    .then(data => { console.log(data); })
-                    .catch(error => { console.log(error);});
+                try {
+                    const response = await fetch('/website', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+                    if (response.ok) {
+                        const result = await response.json();
+                        console.log(result);
+                    } else {
+                        console.log('Error:', response.statusText);
+                    }
+                } catch (error) {
+                    console.log('Error:', error);
+                }
             }
 
             // link submit button to showModal function
