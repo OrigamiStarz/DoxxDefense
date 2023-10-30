@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Text Anonymizer</title>
+        <link rel="icon" href="images/logo.png">
         <!-- google fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,6 +44,7 @@
                                 <p id="content-1">Lorem ipsum</p>
                             </div>
                             <div class="col-lg-8 border-start m-0">
+                                <img id="clipboard" src="images/clipboard.png" alt="">
                                 <h5 class="mt-2"><strong>Revised</strong></h5>
                                 <p id="content-2">Lorem ipsum</p>
                             </div>
@@ -53,7 +55,7 @@
                 </div>
             </div>
         </div>
-                <!-- logo -->
+        <!-- logo -->
         <div class="m-2 fs-5" id="logo">
             <img src="images/logo.png" alt="Logo">
             <p class="m-1">SecretScribbles</p>
@@ -132,8 +134,8 @@
                     body: JSON.stringify(data),
                 })
                     .then(response => response.json())
-                    .then(data => { return data })
-                    .catch(error => {console.error(error);});
+                    .then(data => { console.log(data); })
+                    .catch(error => { console.log(error);});
             }
             // modal 
             function showModal(title, content1, content2) {
@@ -147,13 +149,19 @@
             document.getElementsByClassName("close")[0].addEventListener("click", function() {
                 $("#modal").modal("hide");
             })
-
             // link submit button to showModal function
-            document.getElementById("submit").addEventListener("click", async function() {
-                let content = await sendData();
-                console.log(content);
-            })
-            
+            document.getElementById("submit").addEventListener("click", sendData);
+
+            // copy text into clipboard
+            async function copyText() {
+                let text = document.getElementById("content-2").innerHTML;
+                await navigator.clipboard.writeText(text);
+                alert("Copied!");
+            }
+            document.getElementById("clipboard").onclick = function() {
+                copyText();
+            }
+
         </script>
     </body>
 </html>

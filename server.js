@@ -2,23 +2,29 @@ const express = require("express");
 const fileUpload = require('express-fileupload');
 const app = express();
 const bodyParser =  require("body-parser");
-const axios = require('axios');
+const axios = require('axios').default;
 const cheerio = require('cheerio');
-const crawlee = require("crawlee")
-const Apify = require("apify-cli")
 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 app.use(fileUpload());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// for environmental variables
+
+require('dotenv').config()
+
+AI_API_TOKEN = process.env.AI_API_TOKEN
+AI_API_TEST_TOKEN = process.env.AI_API_TEST_TOKEN
+
 // text page
 app.get("/text", function(req, res) {
     res.sendFile(__dirname + "/public/text.html");
 });
 
-app.post("/text", function(req, res) {
-    // good luck
+app.post("/text", async (req, res) => {
+    const data = await processData(req.body.text);
+    res.json(data);
 });
 
 // document page
@@ -39,6 +45,7 @@ app.get("/website", function(req, res) {
 });
 
 app.post("/website", async function(req, res) {
+    console.log(req.body)
     // use scraper
     scraped = await scrape(req.body["url"], 0, req.body["numCrawl"]);
     res.send(scraped);
@@ -52,6 +59,66 @@ app.get("/*", function(req, res) {
 app.listen(process.env.PORT || 3000, function() {
     console.log(`Server is listening on ${process.env.PORT || 3000}`);
 });
+
+
+// use AI to process data
+function processData(text) {
+    const options = {
+        method: "POST",
+        url: "https://api.edenai.run/v2/text/anonymization",
+        headers: {
+          authorization: "Bearer " + AI_API_TEST_TOKEN,
+        },
+        data: {
+          show_original_response: false,
+          fallback_providers: "",
+          providers: "microsoft",
+          text: text,
+          language: "en",
+        },
+      };
+      
+    return axios
+        .request(options)
+        .then((response) => {
+            let hiddenData = [];
+            for (let i=0; i<response.data.microsoft.entities.length; i++) {
+                hiddenData.push((i+1) + ". " + response.data.microsoft.entities[i].subcategory + ": " + response.data.microsoft.entities[i].content)
+            }
+            return { "content1": hiddenData.join("<br>"), "content2": response.data.microsoft.result};
+        })
+        .catch((error) => {
+          console.error(error);
+          return {content1: "Error", content2: "Error"}
+    });      
+}
+
+function getSynonym(sentence, avoid) {
+    const options = {
+        method: "POST",
+        url: "https://api.edenai.run/v2/text/generation",
+        headers: {
+          authorization: "Bearer " + AI_API_TEST_TOKEN,
+        },
+        data: {
+          show_original_response: false,
+          fallback_providers: "",
+          providers: "openai",
+          text: "Fill in the blank: " + sentence + ". Avoid: " + avoid.join(", ") + ". Format: answer, separated by commas",
+          temperature: 0.2,
+          max_tokens: 50,
+        },
+      };
+      
+      return axios
+        .request(options)
+        .then((response) => {
+          return response.data.openai.generated_text.split(", ");
+        })
+        .catch((error) => {
+          console.error(error);
+    });      
+}
 
 // https://stackoverflow.com/questions/23691194/node-express-file-upload
 

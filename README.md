@@ -7,8 +7,9 @@ Run the following commands:
 3. `npm i scss`
 4. `npm i body-parser`
 5. `npm i express-fileupload`
-6. `npm i crawlee`
+6. `npm i dotenv`
 
 Convenient for testing:
 1. `sass --watch style.scss public/style.css`
 2. `nodemon server.js`
+3. make sure to have your env file
