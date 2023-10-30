@@ -104,47 +104,50 @@
             async function uploadFile() {
                 const fileInput = document.getElementById("inputTag");
                 const file = fileInput.files[0];
-                let loadingInterval = setInterval(updateLoadingIndicator, 1000); // Change the loading indicator every 1 second
-                showModal("", "Loading.", "Loading.");
-                // Function to simulate loading indicator
-                function updateLoadingIndicator() {
-                    const loadingIndicator1 = document.getElementById('content-1');
-                    const loadingIndicator2 = document.getElementById('content-2');
-                        if (loadingIndicator1.textContent === 'Loading...') {
-                            loadingIndicator1.textContent = 'Loading.';
-                            loadingIndicator2.textContent = 'Loading.';
-                        } else if (loadingIndicator1.textContent === 'Loading.') {
-                            loadingIndicator1.textContent = 'Loading..';
-                            loadingIndicator2.textContent = 'Loading..';
-                        } else {
-                            loadingIndicator1.textContent = 'Loading...';
-                            loadingIndicator2.textContent = 'Loading...';
-                    }
-                }
-                // Function to stop the loading indicator and display the response
-                function stopLoadingIndicator() {
-                    clearInterval(loadingInterval); // Clear the loading interval
-                }
                 if (file) {
-                    const formData = new FormData();
-                    formData.append("file", file);
-
-                    try {
-                    const response = await fetch("/document", {
-                        method: "POST",
-                        body: formData,
-                    });
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        showModal("", data.content.content1, data.content.content2);
-                    } else {
-                        console.error("File upload failed.");
+                    let loadingInterval = setInterval(updateLoadingIndicator, 1000); // Change the loading indicator every 1 second
+                    showModal("", "Loading.", "Loading.");
+                    // Function to simulate loading indicator
+                    function updateLoadingIndicator() {
+                        const loadingIndicator1 = document.getElementById('content-1');
+                        const loadingIndicator2 = document.getElementById('content-2');
+                            if (loadingIndicator1.textContent === 'Loading...') {
+                                loadingIndicator1.textContent = 'Loading.';
+                                loadingIndicator2.textContent = 'Loading.';
+                            } else if (loadingIndicator1.textContent === 'Loading.') {
+                                loadingIndicator1.textContent = 'Loading..';
+                                loadingIndicator2.textContent = 'Loading..';
+                            } else {
+                                loadingIndicator1.textContent = 'Loading...';
+                                loadingIndicator2.textContent = 'Loading...';
+                        }
                     }
-                    } catch (error) {
-                    console.error("Error:", error);
+                    // Function to stop the loading indicator and display the response
+                    function stopLoadingIndicator() {
+                        clearInterval(loadingInterval); // Clear the loading interval
+                    }
+                    if (file) {
+                        const formData = new FormData();
+                        formData.append("file", file);
+
+                        try {
+                        const response = await fetch("/document", {
+                            method: "POST",
+                            body: formData,
+                        });
+                        stopLoadingIndicator()
+                        if (response.ok) {
+                            const data = await response.json();
+                            showModal("", data.content.content1, data.content.content2);
+                        } else {
+                            console.error("File upload failed.");
+                        }
+                        } catch (error) {
+                        console.error("Error:", error);
+                        }
                     }
                 }
+
             }
             // modal 
             function showModal(title, content1, content2) {

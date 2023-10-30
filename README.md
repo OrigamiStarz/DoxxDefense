@@ -9,6 +9,8 @@ Run the following commands:
 5. `npm i express-fileupload`
 6. `npm i dotenv`
 7. `npm i fs`
+8. `npm i mammoth`
+9. `npm i pdf-parser`
 
 Convenient for testing:
 1. `sass --watch style.scss public/style.css`
