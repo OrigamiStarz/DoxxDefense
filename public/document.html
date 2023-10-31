@@ -104,22 +104,23 @@
             async function uploadFile() {
                 const fileInput = document.getElementById("inputTag");
                 const file = fileInput.files[0];
+                fileInput.value = "";
                 if (file) {
                     let loadingInterval = setInterval(updateLoadingIndicator, 1000); // Change the loading indicator every 1 second
                     showModal("", "Loading.", "Loading.");
                     // Function to simulate loading indicator
                     function updateLoadingIndicator() {
-                        const loadingIndicator1 = document.getElementById('content-1');
-                        const loadingIndicator2 = document.getElementById('content-2');
-                            if (loadingIndicator1.textContent === 'Loading...') {
-                                loadingIndicator1.textContent = 'Loading.';
-                                loadingIndicator2.textContent = 'Loading.';
-                            } else if (loadingIndicator1.textContent === 'Loading.') {
-                                loadingIndicator1.textContent = 'Loading..';
-                                loadingIndicator2.textContent = 'Loading..';
+                        const loadingIndicator1 = document.getElementById("content-1");
+                        const loadingIndicator2 = document.getElementById("content-2");
+                            if (loadingIndicator1.textContent === "Loading...") {
+                                loadingIndicator1.textContent = "Loading.";
+                                loadingIndicator2.textContent = "Loading.";
+                            } else if (loadingIndicator1.textContent === "Loading.") {
+                                loadingIndicator1.textContent = "Loading..";
+                                loadingIndicator2.textContent = "Loading..";
                             } else {
-                                loadingIndicator1.textContent = 'Loading...';
-                                loadingIndicator2.textContent = 'Loading...';
+                                loadingIndicator1.textContent = "Loading...";
+                                loadingIndicator2.textContent = "Loading...";
                         }
                     }
                     // Function to stop the loading indicator and display the response
@@ -174,10 +175,10 @@
             // download
             function downloadTextFile() {
                 let text = document.getElementById("content-2").innerHTML;
-                const fileName = 'file.txt';
-                const blob = new Blob([text], { type: 'text/plain' });
+                const fileName = "file.txt";
+                const blob = new Blob([text], { type: "text/plain" });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
+                const a = document.createElement("a");
                 a.href = url;
                 a.download = fileName;
                 a.click();
