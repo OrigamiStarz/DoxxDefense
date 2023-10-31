@@ -136,14 +136,16 @@ async function processData(text) {
       entities: ["Name", "Gender", "Person", "Date/Time", "Relationship", "Birthday", "Location", "Biometric Data", "Health/Medical", "Financial", "Other PII"],
     }
   }
-
-  let newText = text;
+  let newText = text.substring(0,10000);
   let newText2 = []
   try {
     const response = await axios.request(options);
-
     // get the PII, hide or change details
     let hideData = [];
+    if (response.data["openai"].status === "fail") {
+      console.log(response.data)
+      return {content1: "Error", content2: "Error"}
+    }
     for (let i = 0; i < response.data["openai"].items.length; i++) {
       let entity = response.data["openai"].items[i].entity;
       hideData.push((i + 1) + ". " + response.data["openai"].items[i].category + ": " + entity);
