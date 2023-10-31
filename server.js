@@ -119,63 +119,48 @@ app.listen(process.env.PORT || 3000, function() {
     console.log(`Server is listening on ${process.env.PORT || 3000}`);
 });
 
-// use AI to process data
-function processData(text) {
-    const options = {
-        method: "POST",
-        url: "https://api.edenai.run/v2/text/anonymization",
-        headers: {
-          authorization: "Bearer " + AI_API_TOKEN,
-        },
-        data: {
-          show_original_response: false,
-          fallback_providers: "",
-          providers: "microsoft",
-          text: text,
-          language: "en",
-        },
-      };
-      
-    return axios
-        .request(options)
-        .then((response) => {
-            let hiddenData = [];
-            for (let i=0; i<response.data.microsoft.entities.length; i++) {
-                hiddenData.push((i+1) + ". " + response.data.microsoft.entities[i].subcategory + ": " + response.data.microsoft.entities[i].content)
-            }
-            return { "content1": hiddenData.join("<br>"), "content2": response.data.microsoft.result};
-        })
-        .catch((error) => {
-          console.error(error);
-          return {content1: "Error", content2: "Error"}
-    });      
-}
+async function processData(text) {
 
-// function getSynonym(sentence, avoid) {
-//     const options = {
-//         method: "POST",
-//         url: "https://api.edenai.run/v2/text/generation",
-//         headers: {
-//           authorization: "Bearer " + AI_API_TEST_TOKEN,
-//         },
-//         data: {
-//           show_original_response: false,
-//           fallback_providers: "",
-//           providers: "openai",
-//           text: "Fill in the blank: " + sentence + ". Avoid: " + avoid.join(", ") + ". Format: answer, separated by commas",
-//           temperature: 0.2,
-//           max_tokens: 50,
-//         },
-//       };
-//       return axios
-//         .request(options)
-//         .then((response) => {
-//           return response.data.openai.generated_text.split(", ");
-//         })
-//         .catch((error) => {
-//           console.error(error);
-//     });      
-// }
+  const options = {
+    method: "POST",
+    url: "https://api.edenai.run/v2/text/custom_named_entity_recognition",
+    headers: {
+      authorization: "Bearer " + AI_API_TOKEN,
+    },
+    data: {
+      show_original_response: false,
+      fallback_providers: "",
+      providers: "openai",
+      language: "en",
+      text: text,
+      entities: ["Name", "Gender", "Person", "Date/Time", "Relationship", "Birthday", "Location", "Biometric Data", "Health/Medical", "Financial", "Other PII"],
+    }
+  }
+
+  let newText = text;
+  let newText2 = []
+  try {
+    const response = await axios.request(options);
+
+    // get the PII, hide or change details
+    let hideData = [];
+    for (let i = 0; i < response.data["openai"].items.length; i++) {
+      let entity = response.data["openai"].items[i].entity;
+      hideData.push((i + 1) + ". " + response.data["openai"].items[i].category + ": " + entity);
+      newText = newText.split(entity).join("*****");
+    }
+    
+    // add the synonyms, parse by sentence.
+    // to be added in the future
+
+    // return it
+    hideData = Array.from(new Set(hideData)); // make it unique
+    console.log(newText2)
+    return { "content1": hideData.join("<br>"), "content2": newText};
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function scrape(url, depth) {
   if (depth <= 0) {
