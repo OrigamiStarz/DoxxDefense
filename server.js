@@ -125,7 +125,7 @@ function processData(text) {
         method: "POST",
         url: "https://api.edenai.run/v2/text/anonymization",
         headers: {
-          authorization: "Bearer " + AI_API_TEST_TOKEN,
+          authorization: "Bearer " + AI_API_TOKEN,
         },
         data: {
           show_original_response: false,
