@@ -1,16 +1,8 @@
-# Secret Scribbles
+# DoxxDefense
 
 ## Requirements
-Run the following commands:
-1. `npm i express`
-2. `npm i bootstrap`
-3. `npm i scss`
-4. `npm i body-parser`
-5. `npm i express-fileupload`
-6. `npm i dotenv`
-7. `npm i fs`
-8. `npm i mammoth`
-9. `npm i pdf-parser`
+Run the following command:
+`npm i express bootstrap scss body-parser express-fileupload dotenv fs mammoth pdf-parser`
 
 Convenient for testing:
 1. `sass --watch style.scss public/style.css`
